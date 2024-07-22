@@ -1,0 +1,79 @@
+<div class="search-filter-container">
+  <button class="filter-button" (click)="toggleFilterMenu()">
+    <i class="fa-solid fa-filter"></i> Filtrer
+  </button>
+
+  <div class="search-bar">
+    <button class="search-button">
+      <i class="fa-solid fa-magnifying-glass"></i>
+    </button>
+    <input type="text" [(ngModel)]="searchTerm" (input)="filterData()" placeholder="Search...">
+  </div>
+  <button class="pay-due-button">PAY DUES</button>
+</div>
+
+<!-- Menu contextuel pour le filtre -->
+<div class="filter-dropdown" *ngIf="filterMenuVisible">
+  <button class="dropdown-toggle" (click)="toggleFilterMenu()">
+    Filter by {{ selectedFilterOption }}
+  </button>
+  <div class="filter-options">
+    <button (click)="selectFilterOption('username')">Username</button>
+    <button (click)="selectFilterOption('userStatus')">User Status</button>
+  </div>
+</div>
+
+<div class="table-container">
+  <table>
+    <thead>
+      <tr>
+        <th><input type="checkbox" (change)="selectAll($event)"></th>
+        <th><i class="fa-regular fa-circle-check"></i></th>
+        <th>User Name</th>
+        <th>User Status</th>
+        <th>Payment Status</th>
+        <th>Amount</th>
+        <th><i class="fa-solid fa-ellipsis-vertical"></i></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of paginatedData" [ngClass]="{'selected-row': user.selected}">
+        <td>
+          <input type="checkbox" [(ngModel)]="user.selected">
+        </td>
+        <td>
+          <i class="fa-regular fa-circle-check"></i>
+        </td>
+        <td class="use">
+          {{ user.username }}<br>
+          <span class="email">{{ user.email }}</span>
+        </td>
+        <td class="stats">•{{ user.userStatus }}<br>
+          <p id="log">Last login : 14/06/2023</p>
+        </td>
+        <td class="paym">•{{ user.paymentStatus }}<br>
+          <p id="log1">Paid on 18/05/2023</p>
+        </td>
+        <td id="log2">${{ user.amount }}<br>USD</td>
+        <td>
+          <button class="icon-button" (click)="toggleDropdown(user)">
+            <i class="fa-solid fa-ellipsis-vertical"></i>
+          </button>
+          <div *ngIf="dropdownVisible && selectedUser === user" class="dropdown-menu show">
+            <button (click)="onEditUser(user)">edit</button>
+            <button (click)="onChangeStatus(user)">activate user</button>
+            <button (click)="onDeleteUser(user)">delete</button>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="pagination">
+  <button (click)="setPage(1)" [disabled]="currentPage === 1">First</button>
+  <button (click)="setPage(currentPage - 1)" [disabled]="currentPage === 1">Previous</button>
+  <span>Page {{ currentPage }} of {{ totalPages }}</span>
+  <button (click)="setPage(currentPage + 1)" [disabled]="currentPage === totalPages">Next</button>
+  <button (click)="setPage(totalPages)" [disabled]="currentPage === totalPages">Last</button>
+</div>
